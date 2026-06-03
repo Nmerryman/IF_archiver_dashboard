@@ -51,5 +51,4 @@ def read_style():
 @app.get("/data")
 def read_data(background_tasks: BackgroundTasks):
     background_tasks.add_task(update_cache)
-    print(stat_cache)
     return stat_cache
