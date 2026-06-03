@@ -113,6 +113,7 @@ function createTableChart(name, data, container) {
 function updateTableChart(name, data, chart) {
     chart.data.labels.push("");
     chart.data.datasets[0].data.push(calcRate(name, data));
+    chart.data.datasets[0].label = `Amount of ${name} added (${data[data.length - 1]["latest data"][name]} total)`;
     chart.update();
 }
 
