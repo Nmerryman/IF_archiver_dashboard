@@ -1,0 +1,5 @@
+services:
+  if_dashboard:
+    build: .
+    ports:
+      - "8515:80"

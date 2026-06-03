@@ -1,0 +1,26 @@
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#app > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-bar-text {
+    font-size: 1.5em;
+    color: black;
+
+}
+
+
+.chart-container {
+    height: 25vh;
+}
+
