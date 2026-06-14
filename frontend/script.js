@@ -1,4 +1,5 @@
 
+const CHART_VISIBLE_COUNT = 5;
 
 var count = 0;
 function getData(state_data, line, tables) {
@@ -6,6 +7,10 @@ function getData(state_data, line, tables) {
         .then(response => response.json())
         .then(data => {
             state_data.push(data);
+            // Keep only the latest items
+            if (state_data.length > CHART_VISIBLE_COUNT) {
+                state_data.shift();
+            }
             updateCompletionBar(state_data, line);
             // updateTableChart("workquantum", state_data, tables["workquantum"]);
             for (const name of getTableNames(data)) {
@@ -14,12 +19,17 @@ function getData(state_data, line, tables) {
             setTimeout(() => {
                 getData(state_data, line, tables);
             }, 5000);
+        }).catch(error => {
+            console.error(error);
+            setTimeout(() => {
+                getData(state_data, line, tables);
+            }, 5000);
         });
 }
 
 
 function getTableNames(data) {
-    return Object.keys(data["latest data"]);
+    return ["completed_work", "workquantum", "users", "feeds", "posts", "comments", "useractions"];
 }
 
 function createCompletionBar(container) {
@@ -47,7 +57,8 @@ function updateCompletionBar(state_data, line) {
     line.animate(percentDone, {duration: 1000, easing: 'easeInOutQuad'});
 }
 
-function calcRate(name, data) {
+function calcChange(name, data) {
+    let updateValue = 0;
     if (data.length > 1) {
         const latestUpdate = data[data.length - 1];
         const secondLatestUpdate = data[data.length - 2];
@@ -55,13 +66,42 @@ function calcRate(name, data) {
             return 0;
         }
         // return (latestUpdate["latest data"][name] - secondLatestUpdate["latest data"][name]) / (latestUpdate["update time"] - secondLatestUpdate["update time"]);
-        return latestUpdate["latest data"][name] - secondLatestUpdate["latest data"][name];
+        updateValue = latestUpdate["latest data"][name] - secondLatestUpdate["latest data"][name];
     } else if (data.length == 1) {
         const latestUpdate = data[data.length - 1];
         // return (latestUpdate["latest data"][name] - latestUpdate["starting data"][name]) / (latestUpdate["update time"] - latestUpdate["start time"]);
-        return latestUpdate["latest data"][name] - latestUpdate["starting data"][name];
+        updateValue = latestUpdate["latest data"][name] - latestUpdate["starting data"][name];
     }
+    return Math.max(updateValue, 0);
 }
+
+function calcRate(name, data) {
+    // Use up to the last 5 data points to calculate rate in items per second
+    const sampleSize = Math.min(5, data.length);
+    if (sampleSize < 2) {
+        return 0;
+    }
+
+    const latestUpdate = data[data.length - 1];
+    const oldestUpdate = data[data.length - sampleSize];
+    
+    const latestValue = latestUpdate["latest data"][name];
+    const oldestValue = oldestUpdate["latest data"][name];
+    const valueChange = latestValue - oldestValue;
+    
+    const latestTime = latestUpdate["update time"];
+    const oldestTime = oldestUpdate["update time"];
+    const timeChange = latestTime - oldestTime;
+    
+    if (timeChange === 0) {
+        return 0;
+    }
+    
+    // Calculate rate in items per second
+    const ratePerSecond = valueChange / timeChange;
+    return Math.max(ratePerSecond, 0);
+}
+
 
 async function createAllTableCharts(state_data, container) {
     // use data fetch to get table names
@@ -95,6 +135,15 @@ function createTableChart(name, data, container) {
         options: {
             maintainAspectRatio: false,
             responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Amount of ${name} added`
+                },
+                legend: {
+                    display: false
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,
@@ -102,7 +151,7 @@ function createTableChart(name, data, container) {
             },
         }
     });
-    const startRate = calcRate(name, data);
+    const startRate = calcChange(name, data);
     if (startRate > 0) {
         chart.data.datasets[0].data.push(startRate);
     }
@@ -112,9 +161,9 @@ function createTableChart(name, data, container) {
 
 function updateTableChart(name, data, chart) {
     chart.data.labels.push("");
-    chart.data.datasets[0].data.push(calcRate(name, data));
-    chart.data.datasets[0].label = `Amount of ${name} added (${data[data.length - 1]["latest data"][name]} total)`;
-    if (chart.data.datasets[0].data.length > 100) {
+    chart.data.datasets[0].data.push(calcChange(name, data));
+    chart.options.plugins.title.text = `Amount of ${name} added - ${data[data.length - 1]["latest data"][name]} total at (${calcRate(name, data).toFixed(2)} items/s)`;
+    if (chart.data.datasets[0].data.length > CHART_VISIBLE_COUNT) {
         chart.data.datasets[0].data.shift();
         chart.data.labels.shift();
     }

@@ -8,7 +8,8 @@ stat_cache = {}
 
 
 def get_data():
-    req = requests.get("http://192.168.192.173:8080/stats")
+    req = requests.get("http://127.0.0.1:8080/stats")
+    # req = requests.get("http://192.168.192.173:8080/stats")
     return req.json()
 
 
