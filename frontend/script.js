@@ -226,6 +226,7 @@ function updateClientCards(data, clientsContainer) {
         
         const scrapeCount = clientData["scrape_count"] || 0;
         const currentWork = clientData["current_work"] || null;
+        const scrapeStart = clientData["start_time"] || 0;
         
         // Build card HTML
         let cardHTML = `
@@ -245,6 +246,10 @@ function updateClientCards(data, clientsContainer) {
                 <div class="card-field">
                     <span class="field-label">Priority:</span>
                     <span class="field-value">${currentWork["Priority"]}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Time Spent:</span>
+                    <span class="field-value">${timeSent - scrapeStart} seconds</span>
                 </div>
                 <div class="card-field">
                     <span class="field-label">URL:</span>
