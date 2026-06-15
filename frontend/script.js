@@ -1,5 +1,5 @@
 
-const CHART_VISIBLE_COUNT = 5;
+const CHART_VISIBLE_COUNT = 100;
 
 fetched_updates_once = false;
 
@@ -82,8 +82,8 @@ function calcChange(name, data) {
 }
 
 function calcRate(name, data) {
-    // Use up to the last 5 data points to calculate rate in items per second
-    const sampleSize = Math.min(5, data.length);
+    // Use up to the last 10 data points to calculate rate in items per second
+    const sampleSize = Math.min(10, data.length);
     if (sampleSize < 2) {
         return 0;
     }

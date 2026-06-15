@@ -8,7 +8,7 @@ import sys
 stat_cache = {}
 src_url = "http://127.0.0.1:8080/"
 if sys.platform == "linux":
-    src_url = "http://192.168.192.173:8080/"
+    src_url = "http://78.46.99.157:8766/"
 
 def get_progress():
     req = requests.get(src_url + "stats")
