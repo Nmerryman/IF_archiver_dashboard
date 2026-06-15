@@ -1,8 +1,6 @@
 
 const CHART_VISIBLE_COUNT = 100;
 
-fetched_updates_once = false;
-
 var count = 0;
 function getData(state_data, line, tables, clientsContainer) {
     fetch("/data")
@@ -18,10 +16,7 @@ function getData(state_data, line, tables, clientsContainer) {
             for (const name of getTableNames(data)) {
                 updateTableChart(name, state_data, tables[name]);
             }
-            if (!fetched_updates_once) {
-                updateClientCards(data, clientsContainer);
-                fetched_updates_once = true;
-            }
+            updateClientCards(data, clientsContainer);
             setTimeout(() => {
                 getData(state_data, line, tables, clientsContainer);
             }, 5000);
