@@ -1,8 +1,10 @@
 
 const CHART_VISIBLE_COUNT = 5;
 
+fetched_updates_once = false;
+
 var count = 0;
-function getData(state_data, line, tables) {
+function getData(state_data, line, tables, clientsContainer) {
     fetch("/data")
         .then(response => response.json())
         .then(data => {
@@ -16,13 +18,17 @@ function getData(state_data, line, tables) {
             for (const name of getTableNames(data)) {
                 updateTableChart(name, state_data, tables[name]);
             }
+            if (!fetched_updates_once) {
+                updateClientCards(data, clientsContainer);
+                fetched_updates_once = true;
+            }
             setTimeout(() => {
-                getData(state_data, line, tables);
+                getData(state_data, line, tables, clientsContainer);
             }, 5000);
         }).catch(error => {
             console.error(error);
             setTimeout(() => {
-                getData(state_data, line, tables);
+                getData(state_data, line, tables, clientsContainer);
             }, 5000);
         });
 }
@@ -170,15 +176,100 @@ function updateTableChart(name, data, chart) {
     chart.update();
 }
 
+function createClientsContainer(container) {
+    const clientsContainer = document.createElement("div");
+    clientsContainer.id = "clients-container";
+    clientsContainer.className = "clients-container";
+    container.appendChild(clientsContainer);
+    return clientsContainer;
+}
 
-
+function updateClientCards(data, clientsContainer) {
+    // Clear existing cards
+    clientsContainer.innerHTML = "";
+    
+    // Create title
+    const title = document.createElement("h2");
+    title.textContent = "Active Clients";
+    clientsContainer.appendChild(title);
+    
+    // Create cards container
+    const cardsWrapper = document.createElement("div");
+    cardsWrapper.className = "cards-wrapper";
+    clientsContainer.appendChild(cardsWrapper);
+    
+    // Get client updates from the latest data
+    const clientUpdates = data["client updates"] || [];
+    
+    if (clientUpdates.length === 0) {
+        const noClients = document.createElement("p");
+        noClients.textContent = "No active clients";
+        cardsWrapper.appendChild(noClients);
+        return;
+    }
+    
+    // Create a card for each client
+    clientUpdates.forEach((client) => {
+        const card = document.createElement("div");
+        card.className = "client-card";
+        
+        const clientId = client["ClientId"] || "Unknown";
+        const timeSent = client["TimeSent"] || 0;
+        
+        // Parse ClientData JSON
+        let clientData = {};
+        try {
+            clientData = JSON.parse(client["ClientData"] || "{}");
+        } catch (e) {
+            console.error("Failed to parse ClientData:", e);
+        }
+        
+        const scrapeCount = clientData["scrape_count"] || 0;
+        const currentWork = clientData["current_work"] || null;
+        
+        // Build card HTML
+        let cardHTML = `
+            <div class="card-header">
+                <h3>${clientId}</h3>
+                <span class="card-time">${new Date(timeSent * 1000).toLocaleTimeString()}</span>
+            </div>
+            <div class="card-content">
+                <div class="card-field">
+                    <span class="field-label">Scrape Count:</span>
+                    <span class="field-value">${scrapeCount}</span>
+                </div>
+        `;
+        
+        if (currentWork) {
+            cardHTML += `
+                <div class="card-field">
+                    <span class="field-label">Priority:</span>
+                    <span class="field-value">${currentWork["Priority"]}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">URL:</span>
+                    <span class="field-value url">${currentWork["WorkUrl"]}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Work Type:</span>
+                    <span class="field-value">${currentWork["WorkType"]}</span>
+                </div>
+            `;
+        }
+        
+        cardHTML += `</div>`;
+        card.innerHTML = cardHTML;
+        cardsWrapper.appendChild(card);
+    });
+}
 
 async function main() {
     const stateData = [];
     const container = document.getElementById("app");
     const line = createCompletionBar(container);
     const tables = await createAllTableCharts(stateData, container);
-    getData(stateData, line, tables);
+    const clientsContainer = createClientsContainer(container);
+    getData(stateData, line, tables, clientsContainer);
     console.log(stateData);
     console.log(stateData.length)
 

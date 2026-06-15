@@ -24,3 +24,96 @@
     height: 25vh;
 }
 
+.clients-container {
+    width: 100%;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.clients-container h2 {
+    margin: 0 0 1.5rem 0;
+    color: #333;
+    font-size: 1.8em;
+}
+
+.cards-wrapper {
+    width: 100%;
+    max-width: 80vw;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0 1rem;
+}
+
+.client-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.client-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.1em;
+    word-break: break-word;
+}
+
+.card-time {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85em;
+    white-space: nowrap;
+    margin-left: 1rem;
+}
+
+.card-content {
+    padding: 1.5rem;
+    color: white;
+}
+
+.card-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.card-field:last-child {
+    margin-bottom: 0;
+}
+
+.field-label {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0.4rem;
+}
+
+.field-value {
+    font-size: 1em;
+    color: rgba(255, 255, 255, 1);
+    word-break: break-word;
+}
+
+.field-value.url {
+    font-size: 0.85em;
+    color: rgba(200, 220, 255, 1);
+    word-break: break-all;
+}
+
