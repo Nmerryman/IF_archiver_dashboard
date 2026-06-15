@@ -199,7 +199,7 @@ function updateClientCards(data, clientsContainer) {
     clientsContainer.appendChild(cardsWrapper);
     
     // Get client updates from the latest data
-    const clientUpdates = data["client updates"] || [];
+    let clientUpdates = data["client updates"] || [];
     
     if (clientUpdates.length === 0) {
         const noClients = document.createElement("p");
@@ -207,6 +207,13 @@ function updateClientCards(data, clientsContainer) {
         cardsWrapper.appendChild(noClients);
         return;
     }
+    
+    // Sort clients by ClientId
+    clientUpdates = clientUpdates.sort((a, b) => {
+        const idA = a["ClientId"] || "";
+        const idB = b["ClientId"] || "";
+        return idA.localeCompare(idB);
+    });
     
     // Create a card for each client
     clientUpdates.forEach((client) => {
