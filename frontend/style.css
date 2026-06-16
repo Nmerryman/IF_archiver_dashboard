@@ -1,12 +1,25 @@
+:root {
+    --primary-color: #ffcc00;
+    --dark_background: #0c0c14;
+    --light_background: #18191e;
+}
+
+body {
+    background: var(--dark_background);
+}
+
 #app {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background: var(--dark_background);
+    min-height: 100vh;
+    color: #ffffff;
 }
 
 #app > div {
-    width: 100%;
+    width: 95%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -15,13 +28,18 @@
 
 .progress-bar-text {
     font-size: 1.5em;
-    color: black;
-
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 
 .chart-container {
     height: 25vh;
+    background: rgba(255, 204, 0, 0.05);
+    border: 1px solid rgba(255, 204, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
 }
 
 .clients-container {
@@ -34,21 +52,32 @@
 
 .clients-container h2 {
     margin: 0 0 1.5rem 0;
-    color: #333;
+    color: var(--primary-color);
     font-size: 1.8em;
+    text-shadow: 0 2px 8px rgba(255, 204, 0, 0.3);
 }
 
 .cards-wrapper {
     width: 100%;
-    max-width: 80vw;
+    max-width: 95vw;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     padding: 0 1rem;
 }
 
+.cards-wrapper p {
+    color: var(--primary-color);
+    font-size: 1.1em;
+}
+
 .client-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(
+        155deg,
+        var(--primary-color) 0%,
+        /* var(--dark_background) 10%, */
+        var(--light_background) 20%
+    );
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;

@@ -37,7 +37,8 @@ function createCompletionBar(container) {
     const barElement = document.createElement("div");
     container.appendChild(barElement);
     var line = new ProgressBar.Line(barElement, {
-        color: 'lightblue',
+        color: '#ffcc00',
+        trailColor: 'var(--light_background)',
         strokeWidth: 1,
         trailWidth: 1,
         text: {
@@ -130,7 +131,8 @@ function createTableChart(name, data, container) {
             datasets: [{
                 label: `Amount of ${name} added`,
                 data: [],
-                // borderWidth: 1
+                borderColor: '#ffcc00',
+                pointBackgroundColor: '#ffcc00',
             }]
         },
         options: {
@@ -139,7 +141,10 @@ function createTableChart(name, data, container) {
             plugins: {
                 title: {
                     display: true,
-                    text: `Amount of ${name} added`
+                    text: `Amount of ${name} added`,
+                    font: {
+                        size: 16,
+                    }
                 },
                 legend: {
                     display: false
@@ -163,7 +168,7 @@ function createTableChart(name, data, container) {
 function updateTableChart(name, data, chart) {
     chart.data.labels.push("");
     chart.data.datasets[0].data.push(calcChange(name, data));
-    chart.options.plugins.title.text = `Amount of ${name} added - ${data[data.length - 1]["latest data"][name]} total at (${calcRate(name, data).toFixed(2)} items/s)`;
+    chart.options.plugins.title.text = `Amount of ${name} added - ${data[data.length - 1]["latest data"][name]} total at ${calcRate(name, data).toFixed(2)} items/s`;
     if (chart.data.datasets[0].data.length > CHART_VISIBLE_COUNT) {
         chart.data.datasets[0].data.shift();
         chart.data.labels.shift();
