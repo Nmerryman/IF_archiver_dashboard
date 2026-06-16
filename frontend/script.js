@@ -168,7 +168,7 @@ function createTableChart(name, data, container) {
 function updateTableChart(name, data, chart) {
     chart.data.labels.push("");
     chart.data.datasets[0].data.push(calcChange(name, data));
-    chart.options.plugins.title.text = `Amount of ${name} added - ${data[data.length - 1]["latest data"][name]} total at ${calcRate(name, data).toFixed(2)} items/s`;
+    chart.options.plugins.title.text = `Amount of ${name} added - ${data[data.length - 1]["latest data"][name].toLocaleString()} total at ${calcRate(name, data).toFixed(2)} items/s`;
     if (chart.data.datasets[0].data.length > CHART_VISIBLE_COUNT) {
         chart.data.datasets[0].data.shift();
         chart.data.labels.shift();
